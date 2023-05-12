@@ -1,0 +1,390 @@
+<my_memory.h>
+    *-----<my_stl_construct.h>
+           *construct()
+           *destroy()
+              *destroy()
+              *destroy_aux()
+              *char*和wchar_t*特化版
+
+    //未使用
+    -----<my_stl_allocator.h>
+        //符合stl规范的接口
+        namespace  _STL_ALLOCATOR_{
+            *class allocator{
+                allocate()
+                    use _allocate()
+                deallocate()
+                    use _deallocate()
+                construct()
+                    use _construct()
+                destroy()
+                    use _destroy()
+            }
+
+            _allocate()
+            _deallocate()
+            _construct()
+            _destroy()
+
+        }
+        
+        
+        *-----<my_stl_alloc.h>
+                using alloc = ;
+                一、二级配置器接口
+                class simple_alloc{}
+                一级配置器
+                 
+                    class malloc_alloc_template{
+                        *allocate()
+                            use malloc()
+                        *reallocate()
+                            use realloc()
+                        *deallocate()
+                            use dealloc()
+                        *_set_malloc_handler()
+                        *_oom_malloc()
+                        *_oom_realloc()
+                    }
+                    using malloc_alloc_first = malloc_alloc_template<0>;
+
+                二级配置器（内存池 + 链表free_list）
+                    *class default_alloc_template{
+                        *ROUND_UP()
+                        *union _obj
+                        *_freelist 定义
+                        *FREELIST_INDEX()
+                        *refill_list()
+                            use chunk_alloc
+                        *chunk_alloc()
+                            use malloc()
+                        *allocate()
+                            use 第一级配置器allocate()
+                            use refill_list()
+                            use ROUND_UP()
+                            use FREELIST_INDEX()
+                        *deallocate()
+                        *reallocate()
+                    }
+                    using malloc_alloc_second = default_alloc_template<__MY_NODE_ALLOCATOR_THREADS,0>;
+                    //选择配置器
+                    using alloc = malloc_alloc_second;
+    *-----<my_stl_uninitialized.h>
+
+            *uninitialized_copy()
+                *_uninitialized_copy()
+                    *_uninitialized_copy_aux()
+                    *use my_copy()
+                    *use construct()
+                    *char* 和 wchar_t* 的特化版本
+            *uninitialized_fill()
+                *_un_initialized_fill()
+                    *_uninitialized_fill_aux()
+                    *use my_fill()
+                    *use _construct()
+            *uninitialized_fill_n()
+                *_uninitialized_fill_n()
+                   * _uninitialized_fill_n_aux()
+                        *use my_fill_n()
+                        *use construct()
+
+    -----<my_stl_iterator.h>
+            *class iterator_traits
+            *class Input_iterator_tag{};
+            *class Output_iterator_tag{};
+            *class Forward_iterator_tag :public Input_iterator_tag{};
+            *class Bidirectional_iterator_tag : public Forward_iterator_tag{};
+            *class Random_iterator_tag : public Bidirectional_iterator_tag{};
+
+            *class iterator{}
+
+            *class iterator_traits{
+                iteraor_category
+                value_type
+                difference_type
+                pointer
+                reference
+            }
+            *iterator_category()
+            *iterator_value_type()
+            *iterator_difference_type()
+
+
+            *advance()
+                *_advance()
+            *distance()
+                *_distance()
+            *class reverse_iterator{}
+
+    *-----<my_stl_type_traits.h>
+            *class type_traits{
+                _this_dummy_member_must_be_first
+                has_trival_default_constructor
+                has_trival_default_destructor
+                has_trival_default_copy_constructor
+                has_trival_default_assignment_operator
+                is_POD_type
+            }
+
+            *struct __false_type{}
+            *struct __true_type{}
+            *//针对系统内置类型的显示具体化版本
+            eg：template<> struct type_traits<int>{};
+    
+<my_stl_algorithm.h>
+        *my_fill()
+        my_copy()统一接口
+            _my_copy_dispatch()模板
+                _my_copy()模板
+                        _my_copy()输入迭代器版
+                        _my_copy()随机迭代器版
+                            use _my_copy_d()
+                _my_copy_t()
+                    版本1 有默认赋值构造函数 __true_type
+                        use memove()
+                    版本2 无默认赋值构造函数 __false_type
+                        use _my_copy_d()
+                _my_copy_dispatch()T*,T*特化版
+                    use _my_copy_t()
+                _my_copy_dispatch()const T*,T*特化版
+                    use _my_copy_t()
+                _my_copy_d()
+        *my_copy()const char*重载
+        *my_copy()const wchar_t*重载
+            
+
+
+
+        *my_copybackward()
+        *my_fill_n()
+        *my_copybackward()//待补充
+
+
+<my_vector.h>
+    class my_vector
+        constructor
+            值初始化列表
+            use initializer_list<>
+        destructor
+        
+        //空间分配相关
+            *_my_fill_and_initialize()
+            *_my_allocate_and_fill()
+        //迭代器
+            *begin()
+            *end()
+            *cbegin()
+            *cend()
+            *rbegin()
+            *rend()
+            *crbegin()
+            *crend()
+        //容量相关
+            *size()
+            *max_size()
+            *resize()
+            *capacity()
+            *empty()
+            *reserve()
+            *shrink_to_fit()
+        //运算符重载
+            operator=
+            operator+
+            operator!=
+            operator==
+            operator[]
+
+        //元素访问相关
+            operator[]
+            at()
+            *front()
+            *back()
+            *data()
+        //修改容器
+            assign()
+            push_back()
+            *pop_back()
+            insert()
+            erase()
+            *swap()
+            *clear()
+            emplace()
+            emplace_back()
+        //配置器相关
+            *get_allocator()
+         
+<my_list.h>
+    //链表节点定义
+    struct ListNode
+    //list迭代器
+    class list_iterator
+        //构造函数
+        list_iterator()
+
+        //运算符重载
+        operator*
+        operator->
+        operator=
+        operator++
+        operator--
+        operator!=
+        operator==
+
+    class list
+        //内存相关
+        _get_node()
+        _perish_node()
+        _create_node()
+        _destroy_node()
+
+        //list初始化相关
+        _empty_list()
+
+        //构造、析构函数
+        list()
+        ~list()
+
+        //迭代器
+        begin()
+        end()
+        cbegin()
+        cend()
+        rbegin()
+        rend()
+        crbegin()
+        crend()
+
+         //功能函数
+         empty()
+         empty()
+
+         //运算符重载
+         operator=
+
+         //元素访问
+         front()
+         back()
+
+         //插入
+         insert()
+         emplace()
+         emplace_front()
+         emplace_back()
+         push_back()
+         
+         //删除
+         erase()
+         pop_front()
+         pop_back()
+         clear()
+
+         //内部实现算法
+         _insert()
+         _range_copy_after()
+         _range_copy_before()
+         _transfer()
+
+         //list自带算法
+         remove()
+         remove_if()
+         unique()
+         splice()
+         merge()
+         reverse()
+         sort()
+
+         //其他
+         resize()
+
+<my_deque.h>
+    struct _deque_iteraor{
+        //设置deque缓冲区的大小
+        *_buffer_size()
+            use _deque_buf_size()
+        *_deque_buf_size()
+        *_set_node()
+        *operator*()
+        *operator->()
+        *operator+()
+        *operator-(_other)
+        *operator-(n)
+        *operator++()
+        *operator--()
+        *operator+=()
+        *operator-=()
+        *operator[]()
+        *operator==()
+        *operator!=()
+        *operator<()
+        *operator<=()
+        *operator>()
+        *operator>=()
+    }
+    class deque{
+        //类型定义
+        using deque_allocator     = simple_alloc<_value_type, _Alloc>
+        using deque_map_allocator = simple_alloc<_pointer,    _Alloc>
+
+        //内存相关
+        *_buffer_size()
+        *_initial_map_size()
+        *_fill_initialize()
+        *_create_map_and_node()
+        *_allocate_node()
+        *_deallocate_node()
+        *_reserve_map_at_front()
+        *_reserve_map_at_back()
+        *_reallocate_map()
+
+        //构造、析构函数
+        deque()
+        ~deque()
+
+        //迭代器
+        *begin()
+        *end()
+        *cbegin()
+        *cend()
+        *rbegin()
+        *rend()
+        *crbegin()
+        *crend()
+
+        //功能函数
+        *size()
+        *clear()
+        *empty()
+        resize()
+        shrink_to_fit()
+
+        //元素访问
+        *front()
+        *back()
+        *at()
+
+        //元素插入
+        *insert()
+            *insert_aux()
+        *emplace()
+        *emplace_back()
+        *emplace_front()
+        *push_back()
+        *push_front()
+
+        //元素删除
+        *erase()
+        *pop_back()
+            *pop_back_aux()
+        *pop_front()
+            *pop_front_aux()
+
+        //运算符重载
+        *operator[]()
+
+        //其他
+        swap()
+        assign()
+        
+    }
+
+    
