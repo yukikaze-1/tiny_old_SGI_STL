@@ -27,7 +27,7 @@ struct tb_tree_iterator : public tb_tree_base_iterator<T>{
 
 
 //rbtree definition
-template <class Value,class Key,class KeyOfValue>
+template <class Value,class Key,class KeyOfValue,class Ref,class Ptr>
 class _rb_tree{
 
 };
