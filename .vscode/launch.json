@@ -7,9 +7,9 @@
       "request": "launch",
       "args": [],
       "stopAtEntry": false,
-      "externalConsole": false,
-      "cwd": "/home/yomu/STLcode/tiny_old_SGI_STL",
-      "program": "/home/yomu/STLcode/tiny_old_SGI_STL/build/Debug/outDebug",
+      "externalConsole": true,
+      "cwd": "c:/Users/yomu/Desktop/vscode",
+      "program": "c:/Users/yomu/Desktop/vscode/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
