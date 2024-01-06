@@ -65,6 +65,14 @@ class malloc_alloc_template{
         _malloc_alloc_oom_handler = _f;
         return _old;
     }
+    /*更易懂的写法
+    static auto set_malloc_handler_1(void (*_f)())->void(*)(){
+        //保存旧的处理函数，并返回
+        void (*_old)() = _malloc_alloc_oom_handler;
+        //设置新的处理函数
+        _malloc_alloc_oom_handler = _f;
+        return _old;
+    }*/
 
 };// end of class 
 
@@ -353,8 +361,11 @@ default_alloc_template<_threads,_inst>::_memory_pool_end = nullptr;
 template<bool _threads,int _inst>
 size_t
 default_alloc_template<_threads,_inst>::_heap_size_use = 0;
+
 //二级配置器的别名
 using malloc_alloc_second = default_alloc_template<__MY_NODE_ALLOCATOR_THREADS,0>;
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //进行配置器的选择
 //__USE_MALLOC代表选择使用第一级配置器，否则，选则使用第二级配置器
